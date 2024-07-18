@@ -2,6 +2,12 @@ import tkinter as tk
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import qrcode as qr
+from tkinter import filedialog
+
+try:
+	from ctypes import windll, byref, sizeof, c_int
+except:
+	pass
 
 class App(ctk.CTk):
 	def __init__(self):
@@ -9,6 +15,7 @@ class App(ctk.CTk):
 		# window setup
 		ctk.set_appearance_mode('light')
 		super().__init__(fg_color = 'white')
+		self.title_bar_color()
 
 		# customization
 		self.title('')
@@ -18,13 +25,16 @@ class App(ctk.CTk):
 		# Entry field
 		self.entry_string = ctk.StringVar()
 		self.entry_string.trace('w',self.create_qr)
-		EntryField(self,self.entry_string)
+		EntryField(self,self.entry_string,self.save)
+
+		# Event for save
+		self.bind('<Return>',self.save)
 
 		# QR code
-		raw_image = Image.open('Placeholder.png').resize((400,400))
-		tk_image = ImageTk.PhotoImage(raw_image)
+		self.raw_image = Image.open('Placeholder.png').resize((400,400))
+		self.tk_image = ImageTk.PhotoImage(self.raw_image)
 		self.qr_image = QrImage(self)
-		self.qr_image.update_image(tk_image)
+		self.qr_image.update_image(self.tk_image)
 
 
 		# running the app
@@ -36,10 +46,28 @@ class App(ctk.CTk):
 			self.raw_image = qr.make(current_text).resize((400,400))
 			self.tk_image = ImageTk.PhotoImage(self.raw_image)
 			self.qr_image.update_image(self.tk_image)
+		else:
+			self.qr_image.clear()
+			self.raw_image = None
+			self.tk_image = None
+	
+	def save(self, event = ''):
+		if self.raw_image:
+			file_path = filedialog.asksaveasfilename()
 
+			if file_path:
+				self.raw_image.save(file_path + '.jpg')
+
+	def title_bar_color(self):
+		try:
+			HWND = windll.user32.GetParent(self.winfo_id())
+			windll.dwmapi.DwmSetWindowAttribute(HWND,35,byref(c_int(0x00FFFFFF)))
+			sizeof(c_int)
+		except:
+			pass
 
 class EntryField(ctk.CTkFrame):
-	def __init__(self, parent,entry_string):
+	def __init__(self, parent,entry_string, save_function):
 		super().__init__(master = parent, 
 				   corner_radius = 20, 
 				   fg_color = '#021FB3')
@@ -68,7 +96,11 @@ class EntryField(ctk.CTkFrame):
 					   textvariable=entry_string)
 		entry.grid(row = 0, column = 1, sticky = 'nsew')
 
-		button = ctk.CTkButton(self.frame, text = 'save', fg_color = '#2E54E8', hover_color = '#4266f1')
+		button = ctk.CTkButton(self.frame, 
+						 text = 'save', 
+						 fg_color = '#2E54E8', 
+						 hover_color = '#4266f1',
+						 command= save_function)
 		button.grid(row = 0, column = 2, sticky = 'nsew', padx = 10)
 
 class QrImage(tk.Canvas):
@@ -77,6 +109,9 @@ class QrImage(tk.Canvas):
 		self.place(relx = 0.5, rely = 0.4, width = 400, height = 400, anchor = 'center')
 
 	def update_image(self, image_tk):
+		self.clear()
 		self.create_image(0,0, image = image_tk, anchor = 'nw')
 
+	def clear(self):
+		self.delete('all')
 App()
