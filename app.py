@@ -1,6 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from PIL import Image, ImageTk
+import qrcode as qr
 
 class App(ctk.CTk):
 	def __init__(self):
@@ -15,7 +16,9 @@ class App(ctk.CTk):
 		self.geometry('400x400')
 
 		# Entry field
-		EntryField(self)
+		self.entry_string = ctk.StringVar()
+		self.entry_string.trace('w',self.create_qr)
+		EntryField(self,self.entry_string)
 
 		# QR code
 		raw_image = Image.open('Placeholder.png').resize((400,400))
@@ -27,10 +30,24 @@ class App(ctk.CTk):
 		# running the app
 		self.mainloop()
 
+	def create_qr(self, *args):
+		current_text = self.entry_string.get()
+		if current_text:
+			self.raw_image = qr.make(current_text).resize((400,400))
+			self.tk_image = ImageTk.PhotoImage(self.raw_image)
+			self.qr_image.update_image(self.tk_image)
+
+
 class EntryField(ctk.CTkFrame):
-	def __init__(self, parent):
-		super().__init__(master = parent, corner_radius = 20, fg_color = '#021FB3')
-		self.place(relx = 0.5, rely = 1, relwidth = 1, relheight = 0.4, anchor = 'center')
+	def __init__(self, parent,entry_string):
+		super().__init__(master = parent, 
+				   corner_radius = 20, 
+				   fg_color = '#021FB3')
+		self.place(relx = 0.5, 
+			 rely = 1, 
+			 relwidth = 1, 
+			 relheight = 0.4, 
+			 anchor = 'center')
 
 		# grid layout 
 		self.rowconfigure((0,1), weight = 1, uniform = 'a')
@@ -44,7 +61,11 @@ class EntryField(ctk.CTkFrame):
 		self.frame.columnconfigure(3, weight = 1, uniform = 'b')
 		self.frame.grid(row = 0, column = 0)
 
-		entry = ctk.CTkEntry(self.frame, fg_color = '#2E54E8', border_width = 0, text_color = 'white')
+		entry = ctk.CTkEntry(self.frame, 
+					   fg_color = '#2E54E8', 
+					   border_width = 0, 
+					   text_color = 'white',
+					   textvariable=entry_string)
 		entry.grid(row = 0, column = 1, sticky = 'nsew')
 
 		button = ctk.CTkButton(self.frame, text = 'save', fg_color = '#2E54E8', hover_color = '#4266f1')
