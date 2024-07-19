@@ -3,11 +3,23 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import qrcode as qr
 from tkinter import filedialog
+import os
+import sys
+
 
 try:
 	from ctypes import windll, byref, sizeof, c_int
 except:
 	pass
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 class App(ctk.CTk):
 	def __init__(self):
@@ -19,7 +31,7 @@ class App(ctk.CTk):
 
 		# customization
 		self.title('')
-		self.iconbitmap('empty.ico')
+		self.iconbitmap(resource_path('empty.ico'))
 		self.geometry('400x400')
 
 		# Entry field
@@ -31,7 +43,7 @@ class App(ctk.CTk):
 		self.bind('<Return>',self.save)
 
 		# QR code
-		self.raw_image = Image.open('Placeholder.png').resize((400,400))
+		self.raw_image = Image.open(resource_path('Placeholder.png')).resize((400,400))
 		self.tk_image = ImageTk.PhotoImage(self.raw_image)
 		self.qr_image = QrImage(self)
 		self.qr_image.update_image(self.tk_image)
