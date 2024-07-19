@@ -31,7 +31,7 @@ class App(ctk.CTk):
 
 		# customization
 		self.title('')
-		self.iconbitmap(resource_path('empty.ico'))
+		self.iconbitmap(resource_path('images\empty.ico'))
 		self.geometry('400x400')
 
 		# Entry field
@@ -43,7 +43,7 @@ class App(ctk.CTk):
 		self.bind('<Return>',self.save)
 
 		# QR code
-		self.raw_image = Image.open(resource_path('Placeholder.png')).resize((400,400))
+		self.raw_image = Image.open(resource_path('images\Blank_AF.jpg')).resize((400,400))
 		self.tk_image = ImageTk.PhotoImage(self.raw_image)
 		self.qr_image = QrImage(self)
 		self.qr_image.update_image(self.tk_image)
