@@ -65,7 +65,7 @@ class App(ctk.CTk):
 	
 	def save(self, event = ''):
 		if self.raw_image:
-			file_path = filedialog.asksaveasfilename()
+			file_path = filedialog.asksaveasfilename(defaultextension=".jpg", filetypes=[("JPEG files", "*.jpg"), ("All files", "*.*")])
 
 			if file_path:
 				self.raw_image.save(file_path + '.jpg')
