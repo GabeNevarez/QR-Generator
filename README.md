@@ -46,8 +46,9 @@ qrcode-generator/
      pyinstaller --version
      ```
 ### 2. Navigate to Directory where ***QR-Gnerator*** is stored in the command line
-### 3. Find the file path for `customtkinter` to input into the command. This is necessary for the use of `customtkinter` in any packaged application. For more information, please see the [CustomTkinter Packaging Guide](https://github.com/TomSchimansky/CustomTkinter/wiki/Packaging).
-  * **One Method for finding the file path for 'customtkinter' is to an ide run the foloowing command coping the input
+### 3. Find the file path for `customtkinter` to input into the `pyinstaller` command. 
+  * <p>This is necessary for the use of `customtkinter` in any packaged application. For more information, please see the [CustomTkinter Packaging Guide](https://github.com/TomSchimansky/CustomTkinter/wiki/Packaging).</p>
+  * * **One method for finding the file path for `customtkinter` is to run the following script in an IDE and then copying the output:**
     ```Python
     import customtkinter
     print(customtkinter.__file__)
